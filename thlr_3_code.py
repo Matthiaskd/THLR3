@@ -75,12 +75,3 @@ def prune(automaton):
         automaton.remove_state(i)
 
 #[/Q7]
-
-
-############################TESTS####################
-B.export("before")
-prune(B)
-#print(is_useful(B,0))
-#B.remove_state(4)
-#B.remove_state(1)
-B.export("after")
