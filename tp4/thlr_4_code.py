@@ -1,0 +1,55 @@
+from thlr_automata import *
+from thlr_regex import *
+
+#[Q1]
+r1=new_regex("a*")
+r2=new_regex("a*.b+c")
+r3=new_regex("(a+ε)*")
+#[/Q1]
+
+#[Q2]
+def convert_regex(enfa, origin, destination, regex):
+    op=regex.root
+    if(op=="."):
+        a=enfa.add_state()
+        b=enfa.add_state()
+        enfa.add_edge(a,"",b)
+        convert_regex(enfa,origin,a,regex.children[0])
+        convert_regex(enfa, b, destination, regex.children[1])
+
+    elif(op=="+"):
+        a=enfa.add_state()
+        b=enfa.add_state()
+        c=enfa.add_state()
+        d=enfa.add_state()
+
+        enfa.add_edge(origin,"",a)
+        enfa.add_edge(origin,"",b)
+        enfa.add_edge(c,"",destination)
+        enfa.add_edge(d,"",destination)
+
+        convert_regex(enfa, a, c, regex.children[0])
+        convert_regex(enfa, b, d, regex.children[1])
+
+    elif(op=="*"):
+        a=enfa.add_state()
+        b=enfa.add_state()
+        enfa.add_edge(origin,"",a)
+        enfa.add_edge(origin, "",destination)
+        enfa.add_edge(b,"",destination)
+        enfa.add_edge(b,"",a)
+        convert_regex(enfa, a, b, regex.children[0])
+    else:
+        enfa.add_letter(op)
+        enfa.add_edge(origin, op,destination)
+#[/Q2]
+
+#[Q3]
+def to_enfa(regex):
+    NFA=ENFA([0,1], [0],[1],[],[])
+    convert_regex(NFA, 0, 1, regex)
+    return NFA
+#[/Q3]
+
+aux=to_enfa(r2)
+aux.export("A")
